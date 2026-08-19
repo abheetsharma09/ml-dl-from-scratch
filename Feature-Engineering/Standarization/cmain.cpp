@@ -2,15 +2,15 @@
 #include <vector>
 #include <cmath>
 using namespace std;
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 
 class Standarization{
   private:
   std::vector<double> test_input_list;
   public:
-    Standarization(std::vector<double> lst){
-        test_input_list = lst;
-    };
-
+  //CONSTRUCTOR
+    Standarization(const std::vector<double>& lst) : test_input_list(lst) {}  //using const allow only to read not edit
     vector<double> calculate(){
         double varianceResultsqSum = 0;
         double totalMean = 0;
@@ -34,24 +34,47 @@ class Standarization{
     }
 };
 
-int main(){
-    std::vector<double> test_data = {
-    73.52, 14.89, 44.12, 92.05, 5.11, 67.84, 31.45, 88.91, 12.33, 53.67,
-    99.14, 25.40, 61.22, 8.76, 47.93, 83.19, 36.54, 70.08, 19.65, 55.42,
-    41.18, 96.73, 2.34, 64.51, 28.09, 85.66, 11.02, 50.88, 77.23, 22.91,
-    58.70, 6.44, 49.33, 91.17, 33.82, 79.50, 15.26, 63.11, 87.04, 18.39,
-    46.05, 94.21, 4.88, 68.12, 29.74, 82.59, 13.90, 52.41, 75.99, 21.06,
-    40.23, 97.85, 1.15, 66.39, 26.47, 84.13, 9.88, 51.56, 78.42, 24.33,
-    57.12, 7.89, 48.01, 90.62, 35.19, 81.34, 16.71, 62.45, 86.29, 17.04,
-    43.88, 93.56, 3.22, 65.04, 30.61, 89.47, 10.55, 54.18, 76.81, 23.50,
-    59.94, 5.72, 45.16, 95.12, 32.07, 80.22, 14.48, 60.77, 88.01, 19.92,
-    42.61, 98.34, 0.45, 69.57, 27.83, 83.68, 11.74, 55.91, 74.25, 20.66
-    };
+namespace py = pybind11;
 
-    vector<double> output_data = Standarization(test_data).calculate();
-
-    for(double i : output_data){
-        cout << i << std::endl;
-    }
-    return 0;
+PYBIND11_MODULE(my_Standarization, m) {
+    // Register the class to Python
+    py::class_<Standarization>(m, "Standarization")
+        .def(py::init<const std::vector<double>&>()) // Binds the constructor
+        .def("calculate", &Standarization::calculate); // Binds the method
 }
+
+//For Testing Purpose
+// int main(){
+//     std::vector<double> test_data = {
+//     73.52, 14.89, 44.12, 92.05, 5.11, 67.84, 31.45, 88.91, 12.33, 53.67,
+//     99.14, 25.40, 61.22, 8.76, 47.93, 83.19, 36.54, 70.08, 19.65, 55.42,
+//     41.18, 96.73, 2.34, 64.51, 28.09, 85.66, 11.02, 50.88, 77.23, 22.91,
+//     58.70, 6.44, 49.33, 91.17, 33.82, 79.50, 15.26, 63.11, 87.04, 18.39,
+//     46.05, 94.21, 4.88, 68.12, 29.74, 82.59, 13.90, 52.41, 75.99, 21.06,
+//     40.23, 97.85, 1.15, 66.39, 26.47, 84.13, 9.88, 51.56, 78.42, 24.33,
+//     57.12, 7.89, 48.01, 90.62, 35.19, 81.34, 16.71, 62.45, 86.29, 17.04,
+//     43.88, 93.56, 3.22, 65.04, 30.61, 89.47, 10.55, 54.18, 76.81, 23.50,
+//     59.94, 5.72, 45.16, 95.12, 32.07, 80.22, 14.48, 60.77, 88.01, 19.92,
+//     42.61, 98.34, 0.45, 69.57, 27.83, 83.68, 11.74, 55.91, 74.25, 20.66
+//     };
+
+//     vector<double> output_data = Standarization(test_data).calculate();
+
+//     for(double i : output_data){
+//         cout << i << std::endl;
+//     }
+//     return 0;
+// }
+
+// CODE TO CREATE THE MODULE 
+
+/*
+////////////// COMMAND ///////////////////
+g++ -O3 -shared -std=c++11 -fPIC $(python3 -m pybind11 --includes) main.cpp -o my_Standarization$(python3-config --extension-suffix)
+
+
+//////////// COMMAND EXPLANATION /////////
+-O3: Tells the compiler to aggressively optimize your loops for maximum execution speed.
+-shared: Tells g++ to produce a shared binary library instead of an executable program.
+$(python3 -m pybind11 --includes): This is a dynamic flag helper. It automatically tells the compiler exactly where the pybind11 and Python development header paths live on your computer.
+*/
