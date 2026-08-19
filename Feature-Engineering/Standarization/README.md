@@ -1,4 +1,4 @@
-## High-Performance Data Standardization (Python + C++)
+# High-Performance Data Standardization (Python + C++)
 
 Hey! this is a project I built to learn how to speed up machine learning data preprocessing. It takes a Python list of numbers and standardizes it (Z-score normalization) using a super-fast C++ backend. Instead of running slow Python for loops to calculate the mean and variance, it passes the data over to C++ via pybind11 and does the heavy lifting instantly. 
 ## Features
