@@ -72,7 +72,7 @@ class Normalization{
     }
 
     vector<double> robustScaling(){
-        test_input_list.sort();
+        std::sort(test_input_list.begin(), test_input_list.end()); 
         vector<double> scaledResult;
         double median = 0;
 
@@ -84,6 +84,17 @@ class Normalization{
             double tempVal3 = test_input_list[tempVal2] + test_input_list[tempVal2 -1];
             median = tempVal3/2;
         }
+         
+        double IQR = test_input_list[std::round(3*(test_input_list.size())/4)]- test_input_list[std::round((test_input_list.size())/4)];
+        
+        for(double i : test_input_list){
+            scaledResult.push_back((i - median)/IQR);
+        }
+        
+        
+        cout << IQR;
+        
+        return scaledResult;
     }
 };
 
@@ -101,7 +112,7 @@ int main(){
     42.61, 98.34, 0.45, 69.57, 27.83, 83.68, 11.74, 55.91, 74.25, 20.66
     };
 
-    vector<double> output_data = Normalization(test_data).min_maxScaling();
+    vector<double> output_data = Normalization(test_data).robustScaling();
 
     for(double i : output_data){
         cout << i << std::endl;
