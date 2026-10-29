@@ -14,6 +14,10 @@ Lets talk about right-skewed target the left skewed idea is also the same. A tar
 
 As we get lower MAE , RMSE this could be a better model and can be our goal. This generally indicate higher prediction accuracy and smaller errors. Error is measured on unseen data **_(Error is measured on 20 random [80/20] train/test splits)_** and on the original, untransformed target, so that all models are compared in the same units.
 
+## Universal Preprocessing
+
+I added a safeguard that clips/clamps the log predictions(execute after the model predicts its values) to the absolute minimum and maximum log charges present in the training data respectively: `np.clip(pred_b_log, min_log_val, max_log_val)`. This prevents exponential reconstruction explosions(too much higher values) when executing `np.expm1()` on the predictions.
+
 ## Medical Insurance Costs Dataset
 
 ___
@@ -26,12 +30,9 @@ ___
 -   `Age`: Primary beneficiary's age (18 to 64)
 -   `Sex`: Gender of the beneficiary (male / female)
 -   `BMI`: Body mass index (weight in kg / height in meters squared) 
-
 -   `Children`: Number of children / dependents covered 
 -   `Smoker`: Smoking status (yes / no) 
-
 -   `Region`: Residential area in the US (southwest, southeast, northwest, northeast)
-
 -   `Charges`: Individual medical costs billed by health insurance
 
 Here, `Charges` is the target/output column, and rest is the input columns.
@@ -48,21 +49,25 @@ Here, `Charges` is the target/output column, and rest is the input columns.
 | Region | categorical (4 values) | one-hot encoded |
 | Charges | target/numeric | Model A: raw. Model B: `log1p`, then `expm1` on predictions |
 
+### Additional preprocessing
+1.  **Duplicate Removal**: We dropped duplicate entries (`.drop_duplicates()`) to prevent identical rows from appearing in both train and test splits.
+2.  **Logical Boundary Validation**: We filtered out logically impossible values, specifically ensuring `age > 0` and `charges > 0` (your target column). This removes corrupt placeholder data before it reaches the model.
+
 ### Medical Insurance Costs: results
 
 **Setup:** 20 random 80/20 train/test splits (seeds 0–19). Both models are scored on the original (untransformed) target. \
 **Target skewness:** `1.51` before the log, `-0.09` after.
 
 | Model | R² (mean ± std) | RMSE (mean ± std) | MAE (mean ± std) |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | A: raw target | 0.739 ± 0.031 | 6,083 ± 460 | 4,246 ± 257 |
-| B: log target | 0.477 ± 0.098 | 8,578 ± 706 | 4,327 ± 433 |
+| B: log target | 0.533 ± 0.071 | 8,117 ± 587 | 4,182 ± 391 |
 
 *± is the standard deviation across the 20 splits: how much the score typically changes from one split to another.*
 
-**Finding:** on this dataset, my hypothesis was not supported. Log-transforming the target made predictions worse on the original scale for R² and RMSE. MAE was slightly higher for the log model, but the gap was small compared with the variation across splits.
+**Finding:** On this dataset, my hypothesis was not supported. Log-transforming the target made predictions worse on the original scale for R² and RMSE. MAE was slightly lower for the log model, but the gap was small compared with the variation across splits.
 
-Each Seed results: [results/med-insurance_predictions.csv](results/med-insurance_predictions.csv)
+**Each Seeds results**: [results/med-insurance_predictions.csv](results/med-insurance_predictions.csv)
 
 
 ## Diamonds Dataset
@@ -74,19 +79,12 @@ ___
 **Dataset Details** :- The Seaborn diamonds dataset contains 53,940 rows and 10 columns detailing the prices and physical attributes of round-cut diamonds.
 
 -   `price`: Price in US dollars ($326 to $18,823)
-
 -   `carat`: Weight of the diamond (0.2 to 5.01)
-
 -   `cut`: Quality of the cut (*Fair, Good, Very Good, Premium, Ideal*)
-
 -   `color`: Diamond color, from *J* (worst) to *D* (best)
-
 -   `clarity`: Measurement of clarity (*I1* [worst] to *IF* [best])
-
 -   `depth`: Total depth percentage (`2 * z / (x + y)`), ranging from 43% to 79%
-
 -   `table`: Width of the top of the diamond relative to widest point (43 to 95)
-
 -   `x`, `y`, `z`: Length, width, and depth in mm
 
 
@@ -110,15 +108,20 @@ ___
 | clarity | categorical (ordinal - 8 values) | mapped to sequential integers (I1=0 to IF=7) |
 | price | target/numeric | Model A: raw. Model B: `log1p`, then `expm1` on predictions |
 
+### Additional Preprocessing
+1.  **Data Cleaning (Before training the model ,Removing Typos):** I removed the physical impossibility records (where dimensions `y` or `z` are larger than 20mm for small diamonds). This is standard practice in data science because keeping obvious typos in your test set corrupts performance evaluations.
 
 ### Diamonds Dataset : results
-
 **Setup:** 20 random 80/20 train/test splits (seeds 0--19). Both models are scored on the original (untransformed) target. \
 **Target skewness:** `1.62` before the log, `0.12` after.
 
 | Model | R² (mean ± std) | RMSE (mean ± std) | MAE (mean ± std) |
 | --- | --- | --- | --- |
-| A: raw target | 0.905 ± 0.005 | 1,225 ± 29 | 805 ± 7 |
-| B: log target | -1.57e+28 ± 7.02e+28 | 1.11e+17 ± 4.94e+17 | 1.07e+15 ± 4.76e+15 |
+| A: raw target | 0.908 ± 0.002 | 1,201 ± 18 | 800 ± 7 |
+| B: log target | 0.953 ± 0.001 | 859 ± 13 | 456 ± 4 |
 
 *± is the standard deviation across the 20 splits: how much the score typically changes from one split to another.*
+
+**Finding**: Model B's initial results are affected by extreme predictions(there are extreame outliers in the dataset) after performing some additional preprocessing (you can check above), now the Model B here is performing quit well. So, here on this current dataset and setup i can say my hypothesis is correct.
+
+**Each Seeds results**: [results/diamondDS_predictions_robust.csv](results/diamondDS_predictions_robust.csv)
