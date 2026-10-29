@@ -51,7 +51,7 @@ Here, `Charges` is the target/output column, and rest is the input columns.
 
 ### Additional preprocessing
 1.  **Duplicate Removal**: We dropped duplicate entries (`.drop_duplicates()`) to prevent identical rows from appearing in both train and test splits.
-2.  **Logical Boundary Validation**: We filtered out logically impossible values, specifically ensuring `age > 0` and `charges > 0` (your target column). This removes corrupt placeholder data before it reaches the model.
+2.  **Logical Boundary Validation**: We filtered out logically impossible values, specifically ensuring `age > 0` and `charges > 0` (in target column). This removes corrupt placeholder data before it reaches the model.
 
 ### Medical Insurance Costs: results
 
