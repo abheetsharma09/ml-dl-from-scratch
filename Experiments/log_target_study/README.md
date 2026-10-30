@@ -307,3 +307,51 @@ Here, for this dataset their is no need for any preprocessing as all the columns
 **Finding**: On this dataset both the models were close. Model B was slightly ahead on each parameter, but the gaps were too small. The results are consistent with the second half of the hypothesis(If the target is already balanced, I expect no real difference).
 
 **Each Seeds results**: [results/housing_predictions_robust.csv](results/housing_predictions_robust.csv)
+
+## Summary across all Datasets
+
+![Paired Graph](assets/output_summary.png)
+*Figure 7: Basic Grpah from the below table.*
+
+| Dataset | Skewness (before → after log) | Lower RMSE | Lower MAE | Better R² (higher) |
+| --- | --- | --- | --- | --- |
+| Medical Insurance Costs | 1.51 → -0.09 | A | B | A |
+| Diamonds Dataset | 1.62 → 0.12 | B | B | B |
+| California Housing Dataset | 0.98 → 0.28 | A | B | A |
+| Airfoil Self-Noise Dataset | -0.41 → -0.54 | A | A | A |
+| Concrete Compressive Strength Dataset | 0.40 → -0.81 | A | A | A |
+| Housing Dataset | 1.17 → 0.13 | B | B | B |
+
+___
+*For RMSE and MAE, lower is better; for R², higher is better.* \
+***A**: raw target* | ***B**: log target*
+
+## Conclusion
+
+According to the data analyzed across all datasets, we can draw the following key conclusions **_[my hypothesis is correct but with few modifications]_** :
+
+* **The Skewness Rule of Thumb:** To obtain performance benefits from log-transforming targets in linear models, the target column **must be significantly right-skewed or left**.
+
+* **The Symmetrical Target Penalty:** If we apply a log transformation to a target that is already close to normal (or negatively skewed)—as observed with the **Concrete Compressive Strength Dataset** (initial skew of `0.40`)—model performance degrades significantly across R², RMSE, and MAE.
+
+* **Proportional Gains:** As the positive skewness of the target increases, the performance gains of Model B (Log) over Model A (Raw) grows.
+
+![Multiple Graph](assets/output_summary_2.png)
+*Figure 8: Multiple Graph here used to explain the Conclusion from the study.*
+
+### The Core Pattern (Graph 1 - Skewness vs. Error Reduction)
+
+- This regression plot highlights our operational rule of thumb: as the initial target skewness increases, the benefit of Model B (Log Target) increases.
+- Highly skewed targets (like Diamonds at 1.62 and Housing at 1.17) show clear performance wins for Model B.
+- Conversely, datasets with near-symmetric or negative initial skewness (such as Concrete Strength and Airfoil Self-Noise) are negatively impacted by the transformation, showing that Model A (Raw Target) is the superior configuration under those conditions.
+
+### Metric-by-Metric Performance Shift (Graph 2 - Heatmap)
+
+- The heatmap confirms that the performance shift is robust across all key evaluation metrics (R2, RMSE, and MAE).
+- For instance, Diamonds experiences a 36.2% improvement in MAE and a 22.9% improvement in RMSE under the log transformation.
+- Medical Insurance is an interesting exception: while it has high initial skewness (1.51), its R2 and RMSE degrade significantly under Model B. This indicates that while the log transform normalizes the distribution, the underlying relationship is highly linear on the raw scale (and sensitive to exponential scaling back-transformation `np.expm1()` errors).
+
+### Target Normalization Capability (Graph 3 - Skewness Shift)
+
+- This horizontal bar chart shows how effectively the log transformation centers the targets closer to 0 (perfect symmetry).
+- We see massive normalizations for Diamonds (reduced from 1.62 to 0.12), Housing (reduced from 1.17 to 0.13), and Medical Insurance (reduced from 1.51 to -0.09).
