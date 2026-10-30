@@ -114,7 +114,7 @@ ___
 1.  **Data Cleaning (Before training the model ,Removing Typos):** I removed the physical impossibility records (where dimensions `y` or `z` are larger than 20mm for small diamonds). This is standard practice in data science because keeping obvious typos in your test set corrupts performance evaluations.
 
 ### Diamonds Dataset : results
-**Setup:** 20 random 80/20 train/test splits (seeds 0--19). Both models are scored on the original (untransformed) target. \
+**Setup:** 20 random 80/20 train/test splits (seeds 0-19). Both models are scored on the original (untransformed) target. \
 **Target skewness:** `1.62` before the log, `0.12` after.
 
 | Model | R² (mean ± std) | RMSE (mean ± std) | MAE (mean ± std) |
@@ -124,6 +124,45 @@ ___
 
 *± is the standard deviation across the 20 splits: how much the score typically changes from one split to another.*
 
-**Finding**: Model B's initial results are affected by extreme predictions(there are extreame outliers in the dataset) after performing some preprocessing (as mentioned above), now the Model B here is performing quit well. So, here on this current dataset and setup i can say my hypothesis is correct by a small margin.
+**Finding**: Model B's is perfroming better on every metric especially MAE and slightly better on R² ,RMSE now the Model B here is performing quit well. So, here on this current dataset and setup i can say result is consistent with my hypothesis by a small margin.
 
 **Each Seeds results**: [results/diamondDS_predictions_robust.csv](results/diamondDS_predictions_robust.csv)
+
+## California Housing Dataset
+
+**Name & Source** :- [fetch_california_housing from Scikit-Learn](https://scikit-learn.org/stable/modules/generated/sklearn.datasets.fetch_california_housing.html)
+
+**Dataset Details** :- This datasets contains 20,640rows and 9columns(8 input and 1 target) derived from the 1990 U.S. Census for California.
+
+-   `MedInc`: Median income in the block group
+-   `HouseAge`: Median house age in the block group
+-   `AveRooms`: Average number of rooms per household
+-   `AveBedrms`: Average number of bedrooms per household
+-   `Population`: Block group population
+-   `AveOccup`: Average house occupancy (number of household members)
+-   `Latitude`: House block latitude
+-   `Longitude`: House block longitude
+-   `MedHouseVal`: Median house value for California districts, expressed in hundreds of thousands of dollars ($100,000) (target/ output column)
+
+### Target Variable Distribution
+![Diamond Dataset Target Histplot](assets/histplot_calif-housing_DS_target.png)
+*Figure 3: Histogram illustrating the medium right skeweness of the target variable (california housing dataset) and a extreame outlier*
+
+### Preprocessing (identical for both models):- 
+Here, for this dataset their is no need for any preprocessing. Dropped duplicates just as a standard sanity check and applied clips/claps to bothe Model A & Model B.
+
+### California Housing Dataset : results
+**Setup:** 20 random 80/20 train/test splits (seeds 0-19). Both models are scored on the original (untransformed) target. \
+**Target skewness:** `0.98` before the log, `0.28` after. 
+
+| Model | R² (mean &plusmn; std) | RMSE (mean &plusmn; std) | MAE (mean &plusmn; std) |
+| --- | --- | --- | --- |
+| A: raw target | 0.618 &plusmn; 0.008 | 0.713 &plusmn; 0.008 | 0.522 &plusmn; 0.005 |
+| B: log target | 0.615 &plusmn; 0.008 | 0.716 &plusmn; 0.010 | 0.497 &plusmn; 0.006 |
+
+*± is the standard deviation across the 20 splits: how much the score typically changes from one split to another.*
+
+**Finding:** On this dataset both the models were close. Model A was slightly ahead on R² and RMSE, but the gaps were smaller than the variation across splits, so I treat them as tied. Model B had a clearly lower MAE (0.497 vs 0.522). The target has moderate skew (0.98), so this dataset does not clearly test either side of the hypothesis.
+
+**Each Seeds results**: [results/calif-housingDS_predictions_robust.csv](results/calif-housingDS_predictions_robust.csv)
+
