@@ -12,7 +12,7 @@ Lets talk about right-skewed target the left skewed idea is also the same. A tar
 
 ## Definition of _“better”_
 
-As we get lower MAE , RMSE this could be a better model and can be our goal. This generally indicate higher prediction accuracy and smaller errors. Error is measured on unseen data **_(Error is measured on 20 random [80/20] train/test splits)_** and on the original, untransformed target, so that all models are compared in the same units.
+As we get lower MAE , RMSE and higher R² score this could be a better model and can be our goal. This generally indicate higher prediction accuracy and smaller errors. Error is measured on unseen data **_(Error is measured on 20 random [80/20] train/test splits)_** and on the original, untransformed target, so that all models are compared in the same units.
 
 ## Universal Preprocessing before Prediction
 
