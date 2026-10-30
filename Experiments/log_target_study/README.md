@@ -349,7 +349,8 @@ According to the data analyzed across all datasets, we can draw the following ke
 
 - The heatmap confirms that the performance shift is robust across all key evaluation metrics (R2, RMSE, and MAE).
 - For instance, Diamonds experiences a 36.2% improvement in MAE and a 22.9% improvement in RMSE under the log transformation.
-- Medical Insurance is an interesting exception: while it has high initial skewness (1.51), its R2 and RMSE degrade significantly under Model B. This indicates that while the log transform normalizes the distribution, the underlying relationship is highly linear on the raw scale (and sensitive to exponential scaling back-transformation `np.expm1()` errors).
+- Medical Insurance is an interesting exception: while it has high initial skewness (1.51), its R2 and RMSE degrade significantly under Model B. This indicates that while the log transform normalizes the distribution, the underlying relationship is highly linear[here features act as flat additions (e.g., a smoker fee adding a flat  $25,000  to base costs)] and is sensitive to exponential scaling back-transformation `np.expm1()` errors.
+
 
 ### Target Normalization Capability (Graph 3 - Skewness Shift)
 
