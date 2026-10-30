@@ -330,11 +330,11 @@ ___
 
 According to the data analyzed across all datasets, we can draw the following key conclusions **_[my hypothesis is correct but with few modifications]_** :
 
-* **The Skewness Rule of Thumb:** To obtain performance benefits from log-transforming targets in linear models, the target column **must be significantly right-skewed or left**.
+* **The Skewness Rule of Thumb:** To obtain performance benefits from log-transforming targets in linear models, the target column **must be significantly right-skewed**.
 
 * **The Symmetrical Target Penalty:** If we apply a log transformation to a target that is already close to normal (or negatively skewed)—as observed with the **Concrete Compressive Strength Dataset** (initial skew of `0.40`)—model performance degrades significantly across R², RMSE, and MAE.
 
-* **Proportional Gains:** As the positive skewness of the target increases, the performance gains of Model B (Log) over Model A (Raw) grows.
+* **Proportional Gains:** As the positive skewness of the target increases, the performance gains of Model B (Log) over Model A (Raw) grows[with exception like we encountered in Medical Insurance Dataset].
 
 ![Multiple Graph](assets/output_summary_2.png)
 *Figure 8: Multiple Graph here used to explain the Conclusion from the study.*
