@@ -209,7 +209,7 @@ Here, for this dataset their is no need for any preprocessing as all the columns
 
 **Dataset Details** :- It has 1030 rows and 9 attributes/columns (8 input features, 1 target variable).
 
-### Input Features & Units
+### Features Units & Details
 
 | Column Name (In Dataset) | Variable Description | Data Type | Measurement Unit |
 | :--- | :--- | :--- | :--- |
@@ -245,3 +245,65 @@ Here, for this dataset their is no need for any preprocessing as all the columns
 **Finding**: Here, clearly Model A is performing better than B in every metric. We applied log despite the target is already close to normal. So, here in this case the log is not contributing rather it is make things even worse.
 
 **Each Seeds results**: [results/concrete_strength_predictions_robust.csv](results/concrete_strength_predictions_robust.csv)
+
+## Housing Prices Dataset
+
+**Name & Source** :- [Housing Prices Dataset, Kaggle](https://www.kaggle.com/datasets/yasserh/housing-prices-dataset)
+
+**Dataset Details** :- It contains 545 samples with 13 features(12 INPUT + 1 TARGET COLUMN).
+
+### Features Units & Details
+
+| Column Name | Data Type | Description |
+| :--- | :--- | :--- |
+| **`price`** | Float | **The Target Variable.** The final sale price of the house. |
+| **`area`** | Float | Total plot or floor area of the house (typically in square feet). |
+| **`bedrooms`** | Int | Total number of bedrooms (1 to 6+). |
+| **`bathrooms`** | Int | Total number of bathrooms. |
+| **`stories`** | Int | Number of levels/floors the house has (e.g., 1, 2, 3, 4). |
+| **`mainroad`** | Categorical (Binary) | Is the house connected/facing a main road? (yes / no). |
+| **`guestroom`** | Categorical (Binary) | Does the house have a dedicated guest room? (yes / no). |
+| **`basement`** | Categorical (Binary) | Does the house have a basement? (yes / no). |
+| **`hotwaterheating`** | Categorical (Binary) | Does the house feature hot water central heating? (yes / no). |
+| **`airconditioning`** | Categorical (Binary) | Does the house have an A/C system installed? (yes / no). |
+| **`parking`** | Int | Number of dedicated car parking spaces available (0 to 3). |
+| **`prefarea`** | Categorical (Binary) | Is the house located in a preferred/premium neighborhood? (yes / no). |
+| **`furnishingstatus`** | Categorical (Nominal) | The interior status: furnished, semi-furnished, or unfurnished. |
+
+### Target Variable Distribution
+
+![Housing Prices Dataset Target Histplot](assets/histogram_housingDF_target.png)
+*Figure 6: Histogram illustrating the right skeweness of the target variable (housing prices dataset) but after applying log it gets close to normally distributed.*
+
+### Preprocessing (identical for both models):-
+
+| Column | Type | Treatment |
+| --- | --- | --- |
+| area | numeric | no changes |
+| bedrooms | numeric | no changes |
+| bathrooms | numeric | no changes |
+| stories | numeric | no changes |
+| parking | numeric | no changes |
+| mainroad | categorical (2 values) | encoded as 0/1 |
+| guestroom | categorical (2 values) | encoded as 0/1 |
+| basement | categorical (2 values) | encoded as 0/1 |
+| hotwaterheating | categorical (2 values) | encoded as 0/1 |
+| airconditioning | categorical (2 values) | encoded as 0/1 |
+| prefarea | categorical (2 values) | encoded as 0/1 |
+| furnishingstatus | categorical (3 values) | one-hot encoded |
+| price | target/numeric | Model A: raw. Model B: `log1p`, then `expm1` on predictions |
+
+### Housing Dataset : results
+
+**Setup:** 20 random 80/20 train/test splits (seeds 0-19). Both models are scored on the original (untransformed) target. **Target skewness:** `1.17` before the log, `0.13` after.
+
+| Model | R² (mean ± std) | RMSE (mean ± std) | MAE (mean ± std) |
+| --- | --- | --- | --- |
+| A: raw target | 0.652 ± 0.037 | 1,089,414 ± 119,685 | 798,663 ± 67,657 |
+| B: log target | 0.665 ± 0.054 | 1,067,224 ± 126,055 | 766,818 ± 74,769 |
+
+*± is the standard deviation across the 20 splits: how much the score typically changes from one split to another.*
+
+**Finding**: On this dataset both the models were close. Model B was slightly ahead on each parameter, but the gaps were too small. The results are consistent with the second half of the hypothesis(If the target is already balanced, I expect no real difference).
+
+**Each Seeds results**: [results/housing_predictions_robust.csv](results/housing_predictions_robust.csv)
