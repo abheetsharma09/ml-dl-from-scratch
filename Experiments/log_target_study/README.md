@@ -14,9 +14,11 @@ Lets talk about right-skewed target the left skewed idea is also the same. A tar
 
 As we get lower MAE , RMSE this could be a better model and can be our goal. This generally indicate higher prediction accuracy and smaller errors. Error is measured on unseen data **_(Error is measured on 20 random [80/20] train/test splits)_** and on the original, untransformed target, so that all models are compared in the same units.
 
-## Universal Preprocessing
+## Universal Preprocessing before Prediction
 
-I added a safeguard that clips/clamps the log predictions(execute after the model predicts its values) to the absolute minimum and maximum log charges present in the training data respectively: `np.clip(pred_b_log, min_log_val, max_log_val)`. This prevents exponential reconstruction explosions(too much higher values) when executing `np.expm1()` on the predictions.
+**For Model B**: I added a safeguard that clips/clamps the log predictions(execute after the model predicts its values) to the absolute minimum and maximum log charges present in the training data respectively: `np.clip(pred_b_log, min_log_val, max_log_val)`. This prevents exponential reconstruction explosions(too much higher values) when executing `np.expm1()` on the predictions.
+
+**For Model A**: Raw predictions are clamped to the minimum and maximum raw target values seen in the training data respectively: `[y_train.min(), y_train.max()]` AS `np.clip(pred_a_raw, min_raw_val, max_raw_val)`
 
 ## Medical Insurance Costs Dataset
 
@@ -60,7 +62,7 @@ Here, `Charges` is the target/output column, and rest is the input columns.
 
 | Model | R² (mean ± std) | RMSE (mean ± std) | MAE (mean ± std) |
 | --- | --- | --- | --- |
-| A: raw target | 0.739 ± 0.031 | 6,083 ± 460 | 4,246 ± 257 |
+| A: raw target | 0.741 ± 0.032 | 6,066 ± 465 | 4,204 ± 261 |
 | B: log target | 0.533 ± 0.071 | 8,117 ± 587 | 4,182 ± 391 |
 
 *± is the standard deviation across the 20 splits: how much the score typically changes from one split to another.*
@@ -117,11 +119,11 @@ ___
 
 | Model | R² (mean ± std) | RMSE (mean ± std) | MAE (mean ± std) |
 | --- | --- | --- | --- |
-| A: raw target | 0.908 ± 0.002 | 1,201 ± 18 | 800 ± 7 |
+| A: raw target | 0.921 ± 0.002 | 1,114 ± 16 | 715 ± 7 |
 | B: log target | 0.953 ± 0.001 | 859 ± 13 | 456 ± 4 |
 
 *± is the standard deviation across the 20 splits: how much the score typically changes from one split to another.*
 
-**Finding**: Model B's initial results are affected by extreme predictions(there are extreame outliers in the dataset) after performing some additional preprocessing (you can check above), now the Model B here is performing quit well. So, here on this current dataset and setup i can say my hypothesis is correct.
+**Finding**: Model B's initial results are affected by extreme predictions(there are extreame outliers in the dataset) after performing some preprocessing (as mentioned above), now the Model B here is performing quit well. So, here on this current dataset and setup i can say my hypothesis is correct by a small margin.
 
 **Each Seeds results**: [results/diamondDS_predictions_robust.csv](results/diamondDS_predictions_robust.csv)
