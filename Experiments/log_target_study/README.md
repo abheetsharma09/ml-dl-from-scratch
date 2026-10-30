@@ -207,7 +207,7 @@ Here, for this dataset their is no need for any preprocessing as all the columns
 
 **Name & Source** :- [Concrete Compressive Strength, UCI](https://archive.ics.uci.edu/dataset/165/concrete+compressive+strength)
 
-**Dataset Details** :- It has 1030 rows and 9 attributes/columns (8 input features, 1 target variable) derived from NASA wind tunnel tests.
+**Dataset Details** :- It has 1030 rows and 9 attributes/columns (8 input features, 1 target variable).
 
 ### Input Features & Units
 
@@ -225,7 +225,7 @@ Here, for this dataset their is no need for any preprocessing as all the columns
 
 ### Target Variable Distribution
 ![Concrete Compressive Strength Dataset Target Histplot](assets/histplot_concrete_strength_DS_target.png)
-*Figure 5: Histogram illustrating the medium right skeweness of the target variable (concrete compressive strength dataset) but after applying log it shows a left skwed graph.*
+*Figure 5: Histogram illustrating the little right skeweness of the target variable (concrete compressive strength dataset) but after applying log it shows a left skewed graph.*
 
 ### Preprocessing (identical for both models):-
 
