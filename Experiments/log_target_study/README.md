@@ -202,3 +202,46 @@ Here, for this dataset their is no need for any preprocessing as all the columns
 **Finding**: On this dataset both the models were close. Model A was slightly ahead on each parameter, but the gaps were far smaller. The results are consistent with the second half of the hypothesis(If the target is already balanced, I expect no real difference).
 
 **Each Seeds results**: [results/airfoilDS_predictions_robust.csv](results/airfoilDS_predictions_robust.csv)
+
+## Concrete Compressive Strength Dataset
+
+**Name & Source** :- [Concrete Compressive Strength, UCI](https://archive.ics.uci.edu/dataset/165/concrete+compressive+strength)
+
+**Dataset Details** :- It has 1030 rows and 9 attributes/columns (8 input features, 1 target variable) derived from NASA wind tunnel tests.
+
+### Input Features & Units
+
+| Column Name (In Dataset) | Variable Description | Data Type | Measurement Unit |
+| :--- | :--- | :--- | :--- |
+| **cement** | Cement component quantity in the mix | float | $\text{kg/m}^3$ |
+| **slag** | Blast furnace slag component quantity | float | $\text{kg/m}^3$ |
+| **ash** | Fly ash component quantity in the mix | float | $\text{kg/m}^3$ |
+| **water** | Water component quantity in the mix | float | $\text{kg/m}^3$ |
+| **superplastic** | Superplasticizer additive quantity | float | $\text{kg/m}^3$ |
+| **coarseagg** | Coarse aggregate component quantity | float | $\text{kg/m}^3$ |
+| **fineagg** | Fine aggregate component quantity | float | $\text{kg/m}^3$ |
+| **age** | Age of the concrete before testing | float | Days |
+| **strength** | **[Target Variable]** Measured compressive strength | float | $\text{MPa}$ |
+
+### Target Variable Distribution
+![Concrete Compressive Strength Dataset Target Histplot](assets/histplot_concrete_strength_DS_target.png)
+*Figure 5: Histogram illustrating the medium right skeweness of the target variable (concrete compressive strength dataset) but after applying log it shows a left skwed graph.*
+
+### Preprocessing (identical for both models):-
+
+Here, for this dataset their is no need for any preprocessing as all the columns are flaot/numerical. Dropped duplicates just as a standard sanity check[25 duplicated found] and applied clips/claps to both Model A & Model B.
+
+### Concrete Compressive Strength Dataset : results
+
+**Setup:** 20 random 80/20 train/test splits (seeds 0-19). Both models are scored on the original (untransformed) target. **Target skewness:** `0.40` before the log, `-0.81` after.
+
+| Model | R² (mean ± std) | RMSE (mean ± std) | MAE (mean ± std) |
+| --- | --- | --- | --- |
+| A: raw target | 0.598 ± 0.035 | 10.225 ± 0.430 | 8.124 ± 0.338 |
+| B: log target | 0.495 ± 0.052 | 11.459 ± 0.563 | 9.031 ± 0.419 |
+
+*± is the standard deviation across the 20 splits: how much the score typically changes from one split to another.*
+
+**Finding**: Here, clearly Model A is performing better than B in every metric. We applied log despite the target is already close to normal. So, here in this case the log is not contributing rather it is make things even worse.
+
+**Each Seeds results**: [results/concrete_strength_predictions_robust.csv](results/concrete_strength_predictions_robust.csv)
