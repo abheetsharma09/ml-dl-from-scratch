@@ -166,3 +166,39 @@ Here, for this dataset their is no need for any preprocessing. Dropped duplicate
 
 **Each Seeds results**: [results/calif-housingDS_predictions_robust.csv](results/calif-housingDS_predictions_robust.csv)
 
+## Airfoil Self-Noise Dataset
+
+**Name & Source** :- [Airfoil Self-Noise Dataset, UCI](https://archive.ics.uci.edu/dataset/291/airfoil+self+noise)
+
+**Dataset Details** :- It has 1,503 rows and 6 attributes/columns (5 input features, 1 target variable) derived from NASA wind tunnel tests.
+
+- `Frequency`: f (in Hertz, Hz)
+- `Angle of Attack`: α (in degrees, °)
+- `Chord Length`: c (in meters, m)
+- `Free-stream Velocity`: in meters per second, m/s
+- `Suction Side Displacement Thickness`: δ (in meters, m)
+- `Scaled Sound Pressure Level`: SPL (in decibels, dB) (Output / Target Column)
+
+### Target Variable Distribution
+
+![Airfoil Self-Noise Dataset Target Histplot](assets/histplot_airfoil_DS_target.png)
+*Figure 4: Histogram illustrating that the target here isn’t right-skewed. It’s mildly left-skewed `−0.41`, and the log made it slightly more skewed `−0.54`.*
+
+### Preprocessing (identical for both models):-
+
+Here, for this dataset their is no need for any preprocessing as all the columns are numerical. Dropped duplicates just as a standard sanity check[but no duplicate found] and applied clips/claps to both Model A & Model B.
+
+### Airfoil Self-Noise Dataset : results
+
+**Setup:** 20 random 80/20 train/test splits (seeds 0-19). Both models are scored on the original (untransformed) target. **Target skewness:** `-0.41` before the log, `-0.54` after.
+
+| Model | R² (mean ± std) | RMSE (mean ± std) | MAE (mean ± std) |
+| --- | --- | --- | --- |
+| A: raw target | 0.497 ± 0.043 | 4.837 ± 0.248 | 3.746 ± 0.166 |
+| B: log target | 0.488 ± 0.044 | 4.877 ± 0.247 | 3.769 ± 0.165 |
+
+*± is the standard deviation across the 20 splits: how much the score typically changes from one split to another.*
+
+**Finding**: On this dataset both the models were close. Model A was slightly ahead on each parameter, but the gaps were far smaller. The results are consistent with the second half of the hypothesis(If the target is already balanced, I expect no real difference).
+
+**Each Seeds results**: [results/airfoilDS_predictions_robust.csv](results/airfoilDS_predictions_robust.csv)
