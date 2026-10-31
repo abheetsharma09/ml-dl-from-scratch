@@ -14,6 +14,21 @@ Lets talk about right-skewed target the left skewed idea is also the same. A tar
 
 As we get lower MAE , RMSE and higher R² score this could be a better model and can be our goal. This generally indicate higher prediction accuracy and smaller errors. Error is measured on unseen data **_(Error is measured on 20 random [80/20] train/test splits)_** and on the original, untransformed target, so that all models are compared in the same units.
 
+## Mathematical Formulation
+
+**Model A (raw target):**  $y = \beta_0 + \beta_1 x_1 + \dots + \beta_p x_p + \varepsilon$
+
+**Model B (log target):**  $\log(1+y) = \gamma_0 + \gamma_1 x_1 + \dots + \gamma_p x_p + \varepsilon', \qquad \hat{y} = \exp\big(\hat{\gamma}_0 + \hat{\gamma}_1 x_1 + \dots\big) - 1$
+
+I used γ for B’s weights because they’re different numbers from A’s, and the hat on ŷ means “the model’s prediction.” The second part is your `np.expm1()` step, and it shows that predictions were converted back to the original scale.
+
+- x₁ to x_p are input columns (age, BMI, and so on).
+- ε is the leftover error the line can’t explain.
+- The betas are just the weights the model learns.
+
+*For the experiment conducted i used LinerRegression class of skLearn*
+
+
 ## Universal Preprocessing before Prediction
 
 **For Model B**: I added a safeguard that clips/clamps the log predictions(execute after the model predicts its values) to the absolute minimum and maximum log charges present in the training data respectively: `np.clip(pred_b_log, min_log_val, max_log_val)`. This prevents exponential reconstruction explosions(too much higher values) when executing `np.expm1()` on the predictions.
